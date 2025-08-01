@@ -37,10 +37,6 @@ public:
     string getInfo() const
     {
         string info = description;
-        if (dueDate.getDay() != 0)
-        {
-            info += " (Scadenza: " + dueDate.toString() + ")";
-        }
         if (completed)
         {
             info += " [COMPLETATO]";

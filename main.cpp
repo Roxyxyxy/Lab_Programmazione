@@ -14,6 +14,7 @@ void showMenu()
     cout << "4. Completa un todo" << endl;
     cout << "5. Rimuovi un todo" << endl;
     cout << "6. Mostra statistiche" << endl;
+    cout << "7. Modifica descrizione di un todo" << endl;
     cout << "0. Esci" << endl;
     cout << "=====================================" << endl;
     cout << "Scegli un'opzione: ";
@@ -29,8 +30,8 @@ int main()
 
     // Aggiungiamo alcuni todos di esempio per iniziare
     cout << "\nAggiungo alcuni task di esempio..." << endl;
-    myList.addTodo(ToDo("Studiare programmazione C++", Date(30, 7, 2025)));
-    myList.addTodo(ToDo("Fare la spesa", Date(29, 7, 2025)));
+    myList.addTodo("Studiare programmazione C++");
+    myList.addTodo("Fare la spesa");
     myList.addTodo("Chiamare il dottore");
 
     int choice;
@@ -89,6 +90,24 @@ int main()
         case 6:
             myList.showStats();
             break;
+        case 7:
+        {
+            if (myList.isEmpty())
+            {
+                cout << "Non ci sono todos da modificare!" << endl;
+                break;
+            }
+            myList.displayAll();
+            int todoNum;
+            cout << "Quale todo vuoi modificare? (numero): ";
+            cin >> todoNum;
+            cin.ignore();
+            string nuovaDescrizione;
+            cout << "Inserisci la nuova descrizione: ";
+            getline(cin, nuovaDescrizione);
+            myList.editDescription(todoNum, nuovaDescrizione);
+            break;
+        }
         case 0:
             cout << "\nGrazie per aver usato la ToDo List!" << endl;
             cout << "Arrivederci!" << endl;
