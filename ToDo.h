@@ -1,5 +1,4 @@
-#ifndef TODO_H
-#define TODO_H
+#pragma once
 
 #include "Date.h"
 #include <string>
@@ -13,40 +12,21 @@ private:
     bool completed;
 
 public:
-    // Costruttore di default
-    ToDo() : description(""), dueDate(Date()), completed(false) {}
-
-    // Costruttore con parametri
-    ToDo(const string &desc, const Date &date)
-        : description(desc), dueDate(date), completed(false) {}
+    // Costruttori
+    ToDo();
+    ToDo(const string &desc, const Date &date);
 
     // Getters
-    string getDescription() const { return description; }
-    Date getDate() const { return dueDate; }
-    bool isCompleted() const { return completed; }
+    string getDescription() const;
+    Date getDate() const;
+    bool isCompleted() const;
 
     // Setters
-    void setDescription(const string &desc) { description = desc; }
-    void setDate(const Date &date) { dueDate = date; }
-    void setCompleted(bool status) { completed = status; }
+    void setDescription(const string &desc);
+    void setDate(const Date &date);
+    void setCompleted(bool status);
 
-    // Metodo per contrassegnare come completato
-    void markCompleted() { completed = true; }
-
-    // Metodo per ottenere informazioni complete del todo
-    string getInfo() const
-    {
-        string info = description;
-        if (completed)
-        {
-            info += " [COMPLETATO]";
-        }
-        else
-        {
-            info += " [DA FARE]";
-        }
-        return info;
-    }
+    // Metodi
+    void markCompleted();
+    string getInfo() const;
 };
-
-#endif // TODO_H

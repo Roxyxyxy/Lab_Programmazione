@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <limits>
 #include "ToDoList.h"
 #include "ToDo.h"
 #include "Date.h"
@@ -9,15 +10,44 @@ void showMenu()
 {
     cout << "\n========== MENU PRINCIPALE ==========" << endl;
     cout << "1. Aggiungi un nuovo todo" << endl;
-    cout << "2. Visualizza tutti i todos" << endl;
-    cout << "3. Visualizza todos da completare" << endl;
-    cout << "4. Completa un todo" << endl;
-    cout << "5. Rimuovi un todo" << endl;
-    cout << "6. Mostra statistiche" << endl;
-    cout << "7. Modifica descrizione di un todo" << endl;
+    cout << "2. Aggiungi todo con data scadenza" << endl;
+    cout << "3. Visualizza tutti i todos" << endl;
+    cout << "4. Visualizza todos da completare" << endl;
+    cout << "5. Completa un todo" << endl;
+    cout << "6. Rimuovi un todo" << endl;
+    cout << "7. Mostra statistiche" << endl;
+    cout << "8. Modifica descrizione di un todo" << endl;
+    cout << "9. Salva lista su file" << endl;
+    cout << "10. Carica lista da file" << endl;
     cout << "0. Esci" << endl;
     cout << "=====================================" << endl;
     cout << "Scegli un'opzione: ";
+}
+
+void clearInput()
+{
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+Date inputDate()
+{
+    int day, month, year;
+    cout << "Inserisci giorno (1-31): ";
+    cin >> day;
+    cout << "Inserisci mese (1-12): ";
+    cin >> month;
+    cout << "Inserisci anno (2000-2100): ";
+    cin >> year;
+
+    Date date(day, month, year);
+    if (!date.isValid())
+    {
+        cout << "Data non valida! Verrà utilizzata una data vuota." << endl;
+        return Date();
+    }
+
+    return date;
 }
 
 int main()
@@ -32,7 +62,7 @@ int main()
     cout << "\nAggiungo alcuni task di esempio..." << endl;
     myList.addTodo("Studiare programmazione C++");
     myList.addTodo("Fare la spesa");
-    myList.addTodo("Chiamare il dottore");
+    myList.addTodo("Chiamare il dottore", Date(15, 8, 2025));
 
     int choice;
     bool running = true;
@@ -41,7 +71,15 @@ int main()
     {
         showMenu();
         cin >> choice;
-        cin.ignore(); // Per pulire il buffer di input
+
+        if (cin.fail())
+        {
+            cout << "Input non valido! Inserisci un numero." << endl;
+            clearInput();
+            continue;
+        }
+
+        clearInput(); // Pulisce il buffer
 
         switch (choice)
         {
@@ -51,15 +89,27 @@ int main()
             cout << "Inserisci la descrizione del todo: ";
             getline(cin, description);
             myList.addTodo(description);
+            cout << "Todo aggiunto con successo!" << endl;
             break;
         }
         case 2:
+        {
+            string description;
+            cout << "Inserisci la descrizione del todo: ";
+            getline(cin, description);
+            cout << "Inserisci la data di scadenza:" << endl;
+            Date dueDate = inputDate();
+            myList.addTodo(description, dueDate);
+            cout << "Todo con scadenza aggiunto con successo!" << endl;
+            break;
+        }
+        case 3:
             myList.displayAll();
             break;
-        case 3:
+        case 4:
             myList.displayPending();
             break;
-        case 4:
+        case 5:
         {
             if (myList.isEmpty())
             {
@@ -73,7 +123,7 @@ int main()
             myList.markCompleted(todoNum);
             break;
         }
-        case 5:
+        case 6:
         {
             if (myList.isEmpty())
             {
@@ -87,10 +137,10 @@ int main()
             myList.removeTodo(todoNum);
             break;
         }
-        case 6:
+        case 7:
             myList.showStats();
             break;
-        case 7:
+        case 8:
         {
             if (myList.isEmpty())
             {
@@ -101,11 +151,27 @@ int main()
             int todoNum;
             cout << "Quale todo vuoi modificare? (numero): ";
             cin >> todoNum;
-            cin.ignore();
+            clearInput();
             string nuovaDescrizione;
             cout << "Inserisci la nuova descrizione: ";
             getline(cin, nuovaDescrizione);
             myList.editDescription(todoNum, nuovaDescrizione);
+            break;
+        }
+        case 9:
+        {
+            string filename;
+            cout << "Inserisci il nome del file (es. todolist.txt): ";
+            getline(cin, filename);
+            myList.saveToFile(filename);
+            break;
+        }
+        case 10:
+        {
+            string filename;
+            cout << "Inserisci il nome del file da caricare: ";
+            getline(cin, filename);
+            myList.loadFromFile(filename);
             break;
         }
         case 0:

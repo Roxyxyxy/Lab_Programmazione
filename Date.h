@@ -1,5 +1,4 @@
-#ifndef DATE_H
-#define DATE_H
+#pragma once
 
 #include <string>
 #include <sstream>
@@ -14,51 +13,24 @@ private:
     int year;
 
 public:
-    // Costruttore di default
-    Date() : day(0), month(0), year(0) {}
-
-    // Costruttore con parametri
-    Date(int d, int m, int y) : day(d), month(m), year(y) {}
+    // Costruttori
+    Date();
+    Date(int d, int m, int y);
 
     // Getters
-    int getDay() const { return day; }
-    int getMonth() const { return month; }
-    int getYear() const { return year; }
+    int getDay() const;
+    int getMonth() const;
+    int getYear() const;
 
     // Setters
-    void setDay(int d) { day = d; }
-    void setMonth(int m) { month = m; }
-    void setYear(int y) { year = y; }
+    void setDay(int d);
+    void setMonth(int m);
+    void setYear(int y);
 
-    // Operatore di uguaglianza
-    bool operator==(const Date &other) const
-    {
-        return day == other.day && month == other.month && year == other.year;
-    }
+    // Operatori
+    bool operator==(const Date &other) const;
 
-    // Metodo per convertire la data in stringa
-    string toString() const
-    {
-        if (day == 0 && month == 0 && year == 0)
-        {
-            return "Non specificata";
-        }
-        stringstream ss;
-        ss << day << "/" << month << "/" << year;
-        return ss.str();
-    }
-
-    // Metodo per verificare se la data è valida
-    bool isValid() const
-    {
-        if (year < 2000 || year > 2100)
-            return false;
-        if (month < 1 || month > 12)
-            return false;
-        if (day < 1 || day > 31)
-            return false;
-        return true;
-    }
+    // Metodi
+    string toString() const;
+    bool isValid() const;
 };
-
-#endif // DATE_H
