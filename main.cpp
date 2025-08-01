@@ -24,6 +24,7 @@ void showMenu()
     cout << "Scegli un'opzione: ";
 }
 
+// Pulisce il buffer di input per evitare errori di lettura
 void clearInput()
 {
     cin.clear();

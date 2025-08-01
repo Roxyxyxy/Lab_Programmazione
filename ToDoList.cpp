@@ -6,6 +6,22 @@ using namespace std;
 
 ToDoList::ToDoList(string title) : title(move(title)) {}
 
+// Metodo privato per validare indice e ottenere iteratore
+list<ToDo>::iterator ToDoList::getIteratorAtIndex(int index)
+{
+    if (index < 1 || index > static_cast<int>(toDoList.size()))
+    {
+        return toDoList.end(); // Ritorna end() per indicare indice non valido
+    }
+
+    auto it = toDoList.begin();
+    for (int i = 1; i < index; i++)
+    {
+        ++it;
+    }
+    return it;
+}
+
 void ToDoList::addTodo(const string &description)
 {
     ToDo newTodo(description, Date());
@@ -22,16 +38,11 @@ void ToDoList::addTodo(const string &description, const Date &dueDate)
 
 void ToDoList::removeTodo(int index)
 {
-    if (index < 1 || index > static_cast<int>(toDoList.size()))
+    auto it = getIteratorAtIndex(index);
+    if (it == toDoList.end())
     {
         cout << "Indice non valido!" << endl;
         return;
-    }
-
-    auto it = toDoList.begin();
-    for (int i = 1; i < index; i++)
-    {
-        ++it;
     }
 
     bool wasCompleted = it->isCompleted();
@@ -53,16 +64,11 @@ void ToDoList::removeAll()
 
 void ToDoList::markCompleted(int index)
 {
-    if (index < 1 || index > static_cast<int>(toDoList.size()))
+    auto it = getIteratorAtIndex(index);
+    if (it == toDoList.end())
     {
         cout << "Indice non valido!" << endl;
         return;
-    }
-
-    auto it = toDoList.begin();
-    for (int i = 1; i < index; i++)
-    {
-        ++it;
     }
 
     if (!it->isCompleted())
@@ -79,16 +85,11 @@ void ToDoList::markCompleted(int index)
 
 void ToDoList::editDescription(int index, const string &newDesc)
 {
-    if (index < 1 || index > static_cast<int>(toDoList.size()))
+    auto it = getIteratorAtIndex(index);
+    if (it == toDoList.end())
     {
         cout << "Indice non valido!" << endl;
         return;
-    }
-
-    auto it = toDoList.begin();
-    for (int i = 1; i < index; i++)
-    {
-        ++it;
     }
 
     it->setDescription(newDesc);
@@ -163,7 +164,7 @@ bool ToDoList::isEmpty() const
 
 int ToDoList::getSize() const
 {
-    return static_cast<int>(toDoList.size());
+    return numberOfTodos;
 }
 
 bool ToDoList::saveToFile(const string &filename) const

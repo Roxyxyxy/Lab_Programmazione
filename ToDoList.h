@@ -38,4 +38,7 @@ private:
     string title;
     int numberOfTodos{0};
     int numberOfCompletedTodos{0};
+
+    // Metodo privato per validare e ottenere iteratore
+    list<ToDo>::iterator getIteratorAtIndex(int index);
 };
