@@ -39,6 +39,7 @@ private:
     int numberOfTodos{0};
     int numberOfCompletedTodos{0};
 
-    // Metodo privato per validare e ottenere iteratore
-    list<ToDo>::iterator getIteratorAtIndex(int index);
+    // Metodi helper per principiante
+    bool isValidIndex(int index) const;
+    ToDo *getTodoAtIndex(int index);
 };

@@ -2,29 +2,47 @@
 #include "ToDoList.h"
 #include <iostream>
 #include <fstream>
+#include <string>
 using namespace std;
 
-ToDoList::ToDoList(string title) : title(move(title)) {}
+// Costruttore con nome
+ToDoList::ToDoList(string title) : title(title) {}
 
-// Metodo privato per validare indice e ottenere iteratore
-list<ToDo>::iterator ToDoList::getIteratorAtIndex(int index)
+// Funzione semplice per trovare un todo per indice (da principiante)
+bool ToDoList::isValidIndex(int index) const
 {
-    if (index < 1 || index > static_cast<int>(toDoList.size()))
+    if (index < 1 || index > numberOfTodos)
     {
-        return toDoList.end(); // Ritorna end() per indicare indice non valido
+        return false;
+    }
+    return true;
+}
+
+// Trova un todo per indice (versione semplice)
+ToDo *ToDoList::getTodoAtIndex(int index)
+{
+    if (!isValidIndex(index))
+    {
+        return nullptr;
     }
 
-    auto it = toDoList.begin();
-    for (int i = 1; i < index; i++)
+    // Uso un contatore per arrivare all'elemento giusto
+    int count = 1;
+    for (auto &todo : toDoList)
     {
-        ++it;
+        if (count == index)
+        {
+            return &todo;
+        }
+        count++;
     }
-    return it;
+    return nullptr;
 }
 
 void ToDoList::addTodo(const string &description)
 {
-    ToDo newTodo(description, Date());
+    Date emptyDate; // Data vuota
+    ToDo newTodo(description, emptyDate);
     toDoList.push_back(newTodo);
     numberOfTodos++;
 }
@@ -38,20 +56,31 @@ void ToDoList::addTodo(const string &description, const Date &dueDate)
 
 void ToDoList::removeTodo(int index)
 {
-    auto it = getIteratorAtIndex(index);
-    if (it == toDoList.end())
+    if (!isValidIndex(index))
     {
         cout << "Indice non valido!" << endl;
         return;
     }
 
-    bool wasCompleted = it->isCompleted();
-    toDoList.erase(it);
-    numberOfTodos--;
-    if (wasCompleted)
-        numberOfCompletedTodos--;
+    // Trovo il todo da rimuovere
+    int count = 1;
+    for (auto it = toDoList.begin(); it != toDoList.end(); it++)
+    {
+        if (count == index)
+        {
+            // Controllo se era completato per aggiornare il contatore
+            if (it->isCompleted())
+            {
+                numberOfCompletedTodos--;
+            }
 
-    cout << "Todo rimosso con successo!" << endl;
+            toDoList.erase(it);
+            numberOfTodos--;
+            cout << "Todo rimosso con successo!" << endl;
+            return;
+        }
+        count++;
+    }
 }
 
 void ToDoList::removeAll()
@@ -64,16 +93,16 @@ void ToDoList::removeAll()
 
 void ToDoList::markCompleted(int index)
 {
-    auto it = getIteratorAtIndex(index);
-    if (it == toDoList.end())
+    ToDo *todo = getTodoAtIndex(index);
+    if (todo == nullptr)
     {
         cout << "Indice non valido!" << endl;
         return;
     }
 
-    if (!it->isCompleted())
+    if (!todo->isCompleted())
     {
-        it->setCompleted(true);
+        todo->setCompleted(true);
         numberOfCompletedTodos++;
         cout << "Todo completato!" << endl;
     }
@@ -85,28 +114,30 @@ void ToDoList::markCompleted(int index)
 
 void ToDoList::editDescription(int index, const string &newDesc)
 {
-    auto it = getIteratorAtIndex(index);
-    if (it == toDoList.end())
+    ToDo *todo = getTodoAtIndex(index);
+    if (todo == nullptr)
     {
         cout << "Indice non valido!" << endl;
         return;
     }
 
-    it->setDescription(newDesc);
+    todo->setDescription(newDesc);
     cout << "Descrizione modificata!" << endl;
 }
 
 void ToDoList::displayAll() const
 {
     cout << "\n========== " << title << " ==========" << endl;
-    if (toDoList.empty())
+
+    if (numberOfTodos == 0)
     {
         cout << "Nessun todo presente!" << endl;
         return;
     }
 
+    // Mostro tutti i todo con un semplice for
     int index = 1;
-    for (const auto &todo : toDoList)
+    for (const ToDo &todo : toDoList)
     {
         cout << index << ". " << todo.getInfo() << endl;
         index++;
@@ -117,7 +148,8 @@ void ToDoList::displayAll() const
 void ToDoList::displayPending() const
 {
     cout << "\n========== TODOS DA COMPLETARE ==========" << endl;
-    if (toDoList.empty())
+
+    if (numberOfTodos == 0)
     {
         cout << "Nessun todo presente!" << endl;
         return;
@@ -125,14 +157,16 @@ void ToDoList::displayPending() const
 
     int index = 1;
     bool hasPending = false;
-    for (const auto &todo : toDoList)
+
+    // Mostro solo quelli non completati con indice corretto
+    for (const ToDo &todo : toDoList)
     {
         if (!todo.isCompleted())
         {
             cout << index << ". " << todo.getInfo() << endl;
             hasPending = true;
         }
-        index++;
+        index++; // Incremento sempre per mantenere l'indice originale
     }
 
     if (!hasPending)
@@ -149,9 +183,11 @@ void ToDoList::showStats() const
     cout << "Todos totali: " << numberOfTodos << endl;
     cout << "Todos completati: " << numberOfCompletedTodos << endl;
     cout << "Todos da completare: " << (numberOfTodos - numberOfCompletedTodos) << endl;
+
+    // Calcolo percentuale semplice
     if (numberOfTodos > 0)
     {
-        double percentuale = static_cast<double>(numberOfCompletedTodos) / numberOfTodos * 100;
+        double percentuale = (double)numberOfCompletedTodos / numberOfTodos * 100;
         cout << "Percentuale completamento: " << percentuale << "%" << endl;
     }
     cout << "=================================" << endl;
@@ -159,7 +195,7 @@ void ToDoList::showStats() const
 
 bool ToDoList::isEmpty() const
 {
-    return toDoList.empty();
+    return (numberOfTodos == 0);
 }
 
 int ToDoList::getSize() const
@@ -169,6 +205,7 @@ int ToDoList::getSize() const
 
 bool ToDoList::saveToFile(const string &filename) const
 {
+    // Apro il file per scrittura
     ofstream file(filename);
     if (!file.is_open())
     {
@@ -176,15 +213,25 @@ bool ToDoList::saveToFile(const string &filename) const
         return false;
     }
 
+    // Scrivo le informazioni di base
     file << title << endl;
     file << numberOfTodos << endl;
     file << numberOfCompletedTodos << endl;
 
-    for (const auto &todo : toDoList)
+    // Scrivo ogni todo (formato semplice con |)
+    for (const ToDo &todo : toDoList)
     {
         file << todo.getDescription() << "|";
         file << todo.getDate().getDay() << "/" << todo.getDate().getMonth() << "/" << todo.getDate().getYear() << "|";
-        file << (todo.isCompleted() ? "1" : "0") << endl;
+
+        if (todo.isCompleted())
+        {
+            file << "1" << endl; // 1 = completato
+        }
+        else
+        {
+            file << "0" << endl; // 0 = non completato
+        }
     }
 
     file.close();
@@ -194,6 +241,7 @@ bool ToDoList::saveToFile(const string &filename) const
 
 bool ToDoList::loadFromFile(const string &filename)
 {
+    // Apro il file per lettura
     ifstream file(filename);
     if (!file.is_open())
     {
@@ -201,46 +249,57 @@ bool ToDoList::loadFromFile(const string &filename)
         return false;
     }
 
+    // Pulisco la lista attuale
     toDoList.clear();
 
+    // Leggo le informazioni di base
     getline(file, title);
     file >> numberOfTodos >> numberOfCompletedTodos;
-    file.ignore(); // Ignora il newline dopo i numeri
+    file.ignore(); // Salto la nuova riga
 
+    // Leggo ogni riga del file
     string line;
     while (getline(file, line))
     {
-        size_t pos1 = line.find('|');
-        size_t pos2 = line.find('|', pos1 + 1);
+        // Cerco la prima | (separatore)
+        int pos1 = (int)line.find('|');
+        if (pos1 == -1)
+            continue; // Riga non valida
 
-        if (pos1 != string::npos && pos2 != string::npos)
+        // Cerco la seconda |
+        int pos2 = (int)line.find('|', pos1 + 1);
+        if (pos2 == -1)
+            continue; // Riga non valida
+
+        // Estraggo le parti
+        string description = line.substr(0, pos1);
+        string dateStr = line.substr(pos1 + 1, pos2 - pos1 - 1);
+        string completedStr = line.substr(pos2 + 1);
+
+        // Processo la data (formato giorno/mese/anno)
+        int day = 0, month = 0, year = 0;
+        int slash1 = (int)dateStr.find('/');
+        int slash2 = (int)dateStr.find('/', slash1 + 1);
+
+        if (slash1 != -1 && slash2 != -1)
         {
-            string description = line.substr(0, pos1);
-            string dateStr = line.substr(pos1 + 1, pos2 - pos1 - 1);
-            string completedStr = line.substr(pos2 + 1);
-
-            // Parse date
-            size_t slash1 = dateStr.find('/');
-            size_t slash2 = dateStr.find('/', slash1 + 1);
-
-            int day = 0, month = 0, year = 0;
-            if (slash1 != string::npos && slash2 != string::npos)
-            {
-                day = stoi(dateStr.substr(0, slash1));
-                month = stoi(dateStr.substr(slash1 + 1, slash2 - slash1 - 1));
-                year = stoi(dateStr.substr(slash2 + 1));
-            }
-
-            Date date(day, month, year);
-            ToDo todo(description, date);
-
-            if (completedStr == "1")
-            {
-                todo.setCompleted(true);
-            }
-
-            toDoList.push_back(todo);
+            day = stoi(dateStr.substr(0, slash1));
+            month = stoi(dateStr.substr(slash1 + 1, slash2 - slash1 - 1));
+            year = stoi(dateStr.substr(slash2 + 1));
         }
+
+        // Creo il todo
+        Date date(day, month, year);
+        ToDo todo(description, date);
+
+        // Imposto se completato
+        if (completedStr == "1")
+        {
+            todo.setCompleted(true);
+        }
+
+        // Aggiungo alla lista
+        toDoList.push_back(todo);
     }
 
     file.close();

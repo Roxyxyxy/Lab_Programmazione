@@ -119,5 +119,5 @@ ctest
 ## Autore
 
 **Roxana Merla** – Matricola 7075963  
-Corso di Laurea in Informatica  
+Corso di Laurea in Ingegneria Informatica  
 Esame di Laboratorio di Programmazione (A.A. 2024–2025)
