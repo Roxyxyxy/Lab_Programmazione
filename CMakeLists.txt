@@ -5,12 +5,20 @@ project(myToDoList)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Ottimizzazioni per Debug/Release
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 # GoogleTest
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9fd7e4e0d09b15a5a15af2e.zip
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP true
 )
+# Configurazione per Windows (evita conflitti di linking)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # Creo l'applicazione principale
@@ -21,7 +29,7 @@ add_executable(myToDoList
     Date.cpp
 )
 
-# Creo i test (tutti i file insieme)
+# Eseguibile per i test
 add_executable(todo_tests
     test/test_todo.cpp
     test/test_todolist.cpp
@@ -31,7 +39,7 @@ add_executable(todo_tests
     Date.cpp
 )
 
-# Collego GoogleTest ai miei test
+# Collegamento GoogleTest ai test
 target_link_libraries(todo_tests gtest_main)
 
 # Abilito i test

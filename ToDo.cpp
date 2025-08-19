@@ -19,19 +19,12 @@ void ToDo::markCompleted() { completed = true; }
 string ToDo::getInfo() const
 {
     string info = description;
-    if (completed)
-    {
-        info += " [COMPLETATO]";
-    }
-    else
-    {
-        info += " [DA FARE]";
-    }
+    info += completed ? " [COMPLETATO]" : " [DA FARE]";
 
-    // Aggiungi data se specificata
-    if (dueDate.getDay() != 0 || dueDate.getMonth() != 0 || dueDate.getYear() != 0)
+    string dateStr = dueDate.toString();
+    if (dateStr != "Non specificata")
     {
-        info += " - Scadenza: " + dueDate.toString();
+        info += " - Scadenza: " + dateStr;
     }
 
     return info;

@@ -39,7 +39,7 @@ private:
     int numberOfTodos{0};
     int numberOfCompletedTodos{0};
 
-    // Metodi helper per principiante
+    // Metodi helper
     bool isValidIndex(int index) const;
     ToDo *getTodoAtIndex(int index);
 };

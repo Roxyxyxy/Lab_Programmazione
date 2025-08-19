@@ -53,6 +53,26 @@ Date inputDate()
     return date;
 }
 
+// Funzione per leggere un numero valido
+int inputNumber()
+{
+    int number;
+    while (true)
+    {
+        cin >> number;
+        if (cin.fail() || number <= 0)
+        {
+            cout << "Inserisci un numero valido (maggiore di 0): ";
+            clearInput();
+        }
+        else
+        {
+            clearInput();
+            return number;
+        }
+    }
+}
+
 int main()
 {
     cout << "********** Benvenuto nella mia ToDo List! **********" << endl;
@@ -120,9 +140,8 @@ int main()
                 break;
             }
             myList.displayAll();
-            int todoNum;
             cout << "Quale todo vuoi completare? (numero): ";
-            cin >> todoNum;
+            int todoNum = inputNumber();
             myList.markCompleted(todoNum);
             break;
         }
@@ -134,9 +153,8 @@ int main()
                 break;
             }
             myList.displayAll();
-            int todoNum;
             cout << "Quale todo vuoi rimuovere? (numero): ";
-            cin >> todoNum;
+            int todoNum = inputNumber();
             myList.removeTodo(todoNum);
             break;
         }
@@ -151,10 +169,8 @@ int main()
                 break;
             }
             myList.displayAll();
-            int todoNum;
             cout << "Quale todo vuoi modificare? (numero): ";
-            cin >> todoNum;
-            clearInput();
+            int todoNum = inputNumber();
             string nuovaDescrizione;
             cout << "Inserisci la nuova descrizione: ";
             getline(cin, nuovaDescrizione);

@@ -13,14 +13,14 @@ Applicazione da linea di comando per la gestione di attività quotidiane, svilup
 - Visualizzazione dell'elenco completo delle attività
 - Visualizzazione delle sole attività da completare
 - Modifica della descrizione di task esistenti
-- Consultazione di statistiche generali (completate, da completare, totali)
-- Salvataggio manuale delle attività su file (`todo.txt`)
-- Caricamento manuale da file tramite menu
-- Gestione e validazione delle date
+- Consultazione di statistiche generali (completate, da completare, percentuali)
+- Salvataggio e caricamento manuale da file con formato semplificato
+- Gestione e validazione avanzata delle date (controllo anni bisestili)
+- Validazione robusta degli input utente con controlli automatici
 - Architettura modulare orientata agli oggetti: classi `ToDo`, `ToDoList`, `Date`
 - Interfaccia utente testuale semplice e intuitiva
 - Build system professionale basato su CMake
-- Test unitari completi con Google Test framework
+- Test unitari completi con Google Test framework v1.14.0
 - Versionamento del codice con Git
 
 ---
@@ -34,9 +34,12 @@ Lab_Programmazione/
 ├── ToDo.h/cpp           # Definizione e gestione dei singoli task
 ├── Date.h/cpp           # Gestione e validazione delle date
 ├── CMakeLists.txt       # Configurazione del build system
+├── README.md            # Documentazione del progetto
 ├── build/               # Directory di compilazione (generata)
 └── test/
-    └── test_todolist.cpp  # Test unitari con Google Test framework
+    ├── test_date.cpp    # Test unitari per la classe Date
+    ├── test_todo.cpp    # Test unitari per la classe ToDo
+    └── test_todolist.cpp # Test unitari per la classe ToDoList
 ```
 
 ---
@@ -64,21 +67,21 @@ g++ -std=c++11 *.cpp -o myToDoList
 
 ## Utilizzo
 
-L'applicazione presenta un **menu interattivo numerato** con 10 opzioni principali per la gestione completa delle attività:
+L'applicazione presenta un **menu interattivo numerato** con 11 opzioni per la gestione completa delle attività:
 
 1. **Aggiungi un nuovo todo** (solo descrizione)
-2. **Aggiungi todo con data scadenza** (descrizione + data)
-3. **Visualizza tutti i todos** (elenco completo)
+2. **Aggiungi todo con data scadenza** (descrizione + data con validazione)
+3. **Visualizza tutti i todos** (elenco completo numerato)
 4. **Visualizza todos da completare** (solo task pendenti)
-5. **Completa un todo** (marca come completato)
-6. **Rimuovi un todo** (elimina dalla lista)
-7. **Mostra statistiche** (contatori e percentuali)
-8. **Modifica descrizione di un todo** (aggiorna testo)
-9. **Salva lista su file** (esporta in `todo.txt`)
-10. **Carica lista da file** (importa da `todo.txt`)
+5. **Completa un todo** (marca come completato con input validato)
+6. **Rimuovi un todo** (elimina dalla lista con conferma)
+7. **Mostra statistiche** (contatori, percentuali di completamento)
+8. **Modifica descrizione di un todo** (aggiorna testo esistente)
+9. **Salva lista su file** (esporta in formato linea per linea)
+10. **Carica lista da file** (importa da file salvato)
 11. **Esci** (chiude l'applicazione)
 
-Il programma utilizza un'interfaccia testuale semplice e guidata, con validazione degli input e messaggi di conferma per ogni operazione.
+Il programma utilizza un'interfaccia testuale semplice e guidata, con **validazione automatica** degli input numerici, gestione robusta degli errori e messaggi di conferma per ogni operazione.
 
 ---
 
@@ -97,22 +100,24 @@ ctest
 
 ### Copertura dei test
 
-- Creazione e gestione di task
-- Operazioni sulla lista (aggiunta, rimozione, completamento)
-- Salvataggio e caricamento da file
-- Validazione delle date
-- Gestione degli edge cases
+- **Classe Date**: Validazione costruttori, getters/setters, controllo anni bisestili, operator==
+- **Classe ToDo**: Creazione task, gestione completamento, manipolazione date e descrizioni
+- **Classe ToDoList**: Operazioni CRUD complete, salvataggio/caricamento file, statistiche
+- **Edge cases**: Gestione indici non validi, file inesistenti, date malformate
+- **Integrazione**: Test del flusso completo di operazioni
 
 ---
 
 ## Tecnologie utilizzate
 
-- **Linguaggio**: C++11
+- **Linguaggio**: C++11 (standard universitario)
 - **Paradigma**: Programmazione orientata agli oggetti
-- **Build System**: CMake 3.25+
-- **Testing Framework**: Google Test
+- **Build System**: CMake 3.10+ (compatibilità Windows/Linux)
+- **Testing Framework**: Google Test v1.14.0
 - **Controllo versione**: Git
-- **Persistenza dati**: File di testo (`todo.txt`)
+- **Persistenza dati**: File di testo con formato semplificato linea per linea
+- **Validazione**: Controlli automatici per input utente e date
+- **Architettura**: Modulare con separazione responsabilità (header/implementation)
 
 ---
 

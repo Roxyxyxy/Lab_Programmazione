@@ -6,7 +6,7 @@
 using namespace std;
 
 // Costruttore con nome
-ToDoList::ToDoList(string title) : title(title) {}
+ToDoList::ToDoList(string title) : title(title), numberOfTodos(0), numberOfCompletedTodos(0) {}
 
 // Costruttore di default
 ToDoList::ToDoList() : title("La mia ToDo List"), numberOfTodos(0), numberOfCompletedTodos(0) {}
@@ -228,7 +228,7 @@ bool ToDoList::saveToFile(const string &filename) const
         file << todo.getDate().getDay() << endl;
         file << todo.getDate().getMonth() << endl;
         file << todo.getDate().getYear() << endl;
-        
+
         if (todo.isCompleted())
         {
             file << "1" << endl; // 1 = completato
@@ -262,54 +262,22 @@ bool ToDoList::loadFromFile(const string &filename)
     file >> numberOfTodos >> numberOfCompletedTodos;
     file.ignore(); // Salto la nuova riga
 
-    // Leggo ogni riga del file
-    string line;
-    while (getline(file, line))
+    // Leggo ogni todo (5 righe per todo)
+    for (int i = 0; i < numberOfTodos; i++)
     {
-        // Cerco la prima | (separatore)
-        int pos1 = (int)line.find('|');
-        if (pos1 == -1)
-            continue; // Riga non valida
+        string description;
+        int day, month, year, completed;
 
-        // Cerco la seconda |
-        int pos2 = (int)line.find('|', pos1 + 1);
-        if (pos2 == -1)
-            continue; // Riga non valida
+        // Leggo i 5 dati del todo
+        getline(file, description);
+        file >> day >> month >> year >> completed;
+        file.ignore(); // Salto la nuova riga dopo il numero
 
-        // Estraggo le parti
-        string description = line.substr(0, pos1);
-        string dateStr = line.substr(pos1 + 1, pos2 - pos1 - 1);
-        string completedStr = line.substr(pos2 + 1);
-
-        // Processo la data (formato giorno/mese/anno)
-        int day = 0, month = 0, year = 0;
-        int slash1 = (int)dateStr.find('/');
-        int slash2 = (int)dateStr.find('/', slash1 + 1);
-
-        if (slash1 != -1 && slash2 != -1)
-        {
-            // Controllo per evitare errori con stringhe malformate
-            try
-            {
-                day = stoi(dateStr.substr(0, slash1));
-                month = stoi(dateStr.substr(slash1 + 1, slash2 - slash1 - 1));
-                year = stoi(dateStr.substr(slash2 + 1));
-            }
-            catch (...)
-            {
-                // Se ci sono errori, usa data vuota
-                day = 0;
-                month = 0;
-                year = 0;
-            }
-        }
-
-        // Creo il todo con controllo di validità
+        // Creo il todo
         Date date(day, month, year);
         ToDo todo(description, date);
 
-        // Imposto se completato
-        if (completedStr == "1")
+        if (completed == 1)
         {
             todo.setCompleted(true);
         }

@@ -12,28 +12,26 @@ class ToDoListTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        // Preparo una lista per i test - uso oggetto diretto, non puntatori
+        // Preparo una lista per i test
         lista = ToDoList("Lista Test");
         dataTest = Date(15, 12, 2024);
     }
 
-    void TearDown() override
-    {
-        // Non serve liberare memoria perché uso oggetti diretti
-    }
-
-    ToDoList lista; // Oggetto diretto invece di puntatore
+    ToDoList lista;
     Date dataTest;
 };
 
-// Test 1: Creare una lista vuota
+// Test 1: Verifica lista completamente vuota
 TEST_F(ToDoListTest, CreaListaVuota)
 {
-    EXPECT_TRUE(lista.isEmpty());
-    EXPECT_EQ(lista.getSize(), 0);
+    // Creo una nuova lista vuota (non uso quella del SetUp che ha già un titolo)
+    ToDoList listaVuota;
+
+    EXPECT_TRUE(listaVuota.isEmpty());
+    EXPECT_EQ(listaVuota.getSize(), 0);
 }
 
-// Test 2: Aggiungere un todo 
+// Test 2: Aggiungere un todo
 TEST_F(ToDoListTest, AggiungiTodo)
 {
     lista.addTodo("Comprare pane");
@@ -45,19 +43,27 @@ TEST_F(ToDoListTest, AggiungiTodo)
 // Test 3: Aggiungere un todo con data
 TEST_F(ToDoListTest, AggiungiTodoConData)
 {
+    // Verifico che parta vuota
+    EXPECT_EQ(lista.getSize(), 0);
+
     lista.addTodo("Comprare regali", dataTest);
 
     EXPECT_EQ(lista.getSize(), 1);
+    EXPECT_FALSE(lista.isEmpty());
 }
 
 // Test 4: Aggiungere più todo
 TEST_F(ToDoListTest, AggiungiPiuTodo)
 {
+    // Verifico che parta vuota
+    EXPECT_EQ(lista.getSize(), 0);
+
     lista.addTodo("Todo 1");
     lista.addTodo("Todo 2", dataTest);
     lista.addTodo("Todo 3");
 
     EXPECT_EQ(lista.getSize(), 3);
+    EXPECT_FALSE(lista.isEmpty());
 }
 
 // Test 5: Rimuovere un todo
@@ -77,9 +83,12 @@ TEST_F(ToDoListTest, CompletaTodo)
 {
     lista.addTodo("Da completare");
 
+    // Prima del completamento
+    EXPECT_EQ(lista.getSize(), 1);
+
     lista.markCompleted(1);
 
-    // Il todo c'è ancora ma è completato
+    // Dopo il completamento: il todo c'è ancora ma è completato
     EXPECT_EQ(lista.getSize(), 1);
 }
 
@@ -88,8 +97,12 @@ TEST_F(ToDoListTest, ModificaTodo)
 {
     lista.addTodo("Testo originale");
 
+    // Verifico che sia stato aggiunto
+    EXPECT_EQ(lista.getSize(), 1);
+
     lista.editDescription(1, "Testo nuovo");
 
+    // Verifico che sia ancora presente (non rimosso)
     EXPECT_EQ(lista.getSize(), 1);
 }
 
@@ -113,8 +126,8 @@ TEST_F(ToDoListTest, SalvaSuFile)
 
     bool risultato = lista.saveToFile("test.txt");
 
-    // Controllo che l'operazione sia stata fatta
-    EXPECT_TRUE(risultato == true || risultato == false);
+    // Verifico che il salvataggio sia andato a buon fine
+    EXPECT_TRUE(risultato);
 }
 
 // Test 10: Caricare da file
@@ -124,19 +137,37 @@ TEST_F(ToDoListTest, CaricaDaFile)
     lista.addTodo("Todo salvato", dataTest);
     lista.saveToFile("test.txt");
 
-    // Poi creo una nuova lista e carico
+    // Creo una nuova lista vuota e carico
     ToDoList nuovaLista("Nuova");
     bool risultato = nuovaLista.loadFromFile("test.txt");
 
-    // Controllo che l'operazione sia stata fatta
-    EXPECT_TRUE(risultato == true || risultato == false);
+    // Verifico che il caricamento sia andato a buon fine
+    EXPECT_TRUE(risultato);
+    EXPECT_EQ(nuovaLista.getSize(), 1);
 }
 
 // Test extra: Costruttore senza nome
-TEST(ToDoListSemplice, CostruttoreVuoto)
+TEST(ToDoListBasico, CostruttoreVuoto)
 {
     ToDoList lista;
 
     EXPECT_TRUE(lista.isEmpty());
     EXPECT_EQ(lista.getSize(), 0);
+}
+
+// Test extra: Gestione indici non validi
+TEST(ToDoListBasico, IndiciNonValidi)
+{
+    ToDoList lista("Test");
+
+    // Aggiungo un todo
+    lista.addTodo("Test");
+    EXPECT_EQ(lista.getSize(), 1);
+
+    // Provo a rimuovere con indice non valido (dovrebbe non fare nulla)
+    lista.removeTodo(0); // Indice troppo basso
+    EXPECT_EQ(lista.getSize(), 1);
+
+    lista.removeTodo(5); // Indice troppo alto
+    EXPECT_EQ(lista.getSize(), 1);
 }
