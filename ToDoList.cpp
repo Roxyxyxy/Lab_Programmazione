@@ -8,7 +8,10 @@ using namespace std;
 // Costruttore con nome
 ToDoList::ToDoList(string title) : title(title) {}
 
-// Funzione semplice per trovare un todo per indice (da principiante)
+// Costruttore di default
+ToDoList::ToDoList() : title("La mia ToDo List"), numberOfTodos(0), numberOfCompletedTodos(0) {}
+
+// Funzione per trovare un todo per indice
 bool ToDoList::isValidIndex(int index) const
 {
     if (index < 1 || index > numberOfTodos)
@@ -18,7 +21,7 @@ bool ToDoList::isValidIndex(int index) const
     return true;
 }
 
-// Trova un todo per indice (versione semplice)
+// Trova un todo per indice
 ToDo *ToDoList::getTodoAtIndex(int index)
 {
     if (!isValidIndex(index))
@@ -135,7 +138,7 @@ void ToDoList::displayAll() const
         return;
     }
 
-    // Mostro tutti i todo con un semplice for
+    // Visualizzazione di tutti i todo
     int index = 1;
     for (const ToDo &todo : toDoList)
     {
@@ -184,7 +187,7 @@ void ToDoList::showStats() const
     cout << "Todos completati: " << numberOfCompletedTodos << endl;
     cout << "Todos da completare: " << (numberOfTodos - numberOfCompletedTodos) << endl;
 
-    // Calcolo percentuale semplice
+    // Calcolo percentuale di completamento
     if (numberOfTodos > 0)
     {
         double percentuale = (double)numberOfCompletedTodos / numberOfTodos * 100;
@@ -218,12 +221,14 @@ bool ToDoList::saveToFile(const string &filename) const
     file << numberOfTodos << endl;
     file << numberOfCompletedTodos << endl;
 
-    // Scrivo ogni todo (formato semplice con |)
+    // Scrivo ogni todo (ogni dato su una riga)
     for (const ToDo &todo : toDoList)
     {
-        file << todo.getDescription() << "|";
-        file << todo.getDate().getDay() << "/" << todo.getDate().getMonth() << "/" << todo.getDate().getYear() << "|";
-
+        file << todo.getDescription() << endl;
+        file << todo.getDate().getDay() << endl;
+        file << todo.getDate().getMonth() << endl;
+        file << todo.getDate().getYear() << endl;
+        
         if (todo.isCompleted())
         {
             file << "1" << endl; // 1 = completato
@@ -283,12 +288,23 @@ bool ToDoList::loadFromFile(const string &filename)
 
         if (slash1 != -1 && slash2 != -1)
         {
-            day = stoi(dateStr.substr(0, slash1));
-            month = stoi(dateStr.substr(slash1 + 1, slash2 - slash1 - 1));
-            year = stoi(dateStr.substr(slash2 + 1));
+            // Controllo per evitare errori con stringhe malformate
+            try
+            {
+                day = stoi(dateStr.substr(0, slash1));
+                month = stoi(dateStr.substr(slash1 + 1, slash2 - slash1 - 1));
+                year = stoi(dateStr.substr(slash2 + 1));
+            }
+            catch (...)
+            {
+                // Se ci sono errori, usa data vuota
+                day = 0;
+                month = 0;
+                year = 0;
+            }
         }
 
-        // Creo il todo
+        // Creo il todo con controllo di validità
         Date date(day, month, year);
         ToDo todo(description, date);
 

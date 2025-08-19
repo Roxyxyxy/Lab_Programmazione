@@ -3,15 +3,50 @@ using namespace std;
 
 Date::Date() : day(0), month(0), year(0) {}
 
-Date::Date(int d, int m, int y) : day(d), month(m), year(y) {}
+Date::Date(int d, int m, int y)
+{
+    // Controllo data
+    if (d < 1 || d > 31 || m < 1 || m > 12 || y < 2000 || y > 2100)
+    {
+        day = 0;
+        month = 0;
+        year = 0;
+    }
+    else
+    {
+        day = d;
+        month = m;
+        year = y;
+    }
+}
 
 int Date::getDay() const { return day; }
 int Date::getMonth() const { return month; }
 int Date::getYear() const { return year; }
 
-void Date::setDay(int d) { day = d; }
-void Date::setMonth(int m) { month = m; }
-void Date::setYear(int y) { year = y; }
+void Date::setDay(int d)
+{
+    if (d >= 1 && d <= 31)
+    {
+        day = d;
+    }
+}
+
+void Date::setMonth(int m)
+{
+    if (m >= 1 && m <= 12)
+    {
+        month = m;
+    }
+}
+
+void Date::setYear(int y)
+{
+    if (y >= 2000 && y <= 2100)
+    {
+        year = y;
+    }
+}
 
 bool Date::operator==(const Date &other) const
 {

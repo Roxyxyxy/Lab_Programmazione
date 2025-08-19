@@ -42,10 +42,12 @@ Date inputDate()
     cin >> year;
 
     Date date(day, month, year);
+
+    // Controllo validità della data
     if (!date.isValid())
     {
         cout << "Data non valida! Verrà utilizzata una data vuota." << endl;
-        return Date();
+        return Date(); // Data vuota
     }
 
     return date;
@@ -54,7 +56,7 @@ Date inputDate()
 int main()
 {
     cout << "********** Benvenuto nella mia ToDo List! **********" << endl;
-    cout << "\nQuesto è un semplice programma per gestire i tuoi task." << endl;
+    cout << "\nQuesto è un programma per gestire i tuoi task." << endl;
 
     // Creiamo una lista todo
     ToDoList myList("La mia lista personale");
