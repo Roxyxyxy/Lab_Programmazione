@@ -85,7 +85,7 @@ int main()
     cout << "\nAggiungo alcuni task di esempio..." << endl;
     myList.addTodo("Studiare programmazione C++");
     myList.addTodo("Fare la spesa");
-    myList.addTodo("Chiamare il dottore", Date(15, 8, 2025));
+    myList.addTodo("Chiamare il dottore", Date(25, 8, 2025));
 
     int choice;
     bool running = true;

@@ -10,7 +10,7 @@ class ToDoList
 {
 public:
     explicit ToDoList(string title);
-    ToDoList() = default;
+    ToDoList();
 
     // Gestione todos
     void addTodo(const string &description);
